@@ -425,6 +425,12 @@ def main():
     if not options.only_summary and (options.print_stats or (options.no_web and not options.slave)):
         # spawn stats printing greenlet
         gevent.spawn(stats_printer)
+
+    if options.blueprint and not os.path.exists(options.blueprint):
+        logger.error(
+            "Couldn't find specified blueprint file: %s" % (options.blueprint,)
+        )
+        sys.exit(1)
     
     def shutdown(code=0):
         """
