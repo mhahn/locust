@@ -94,8 +94,9 @@ class Locust(object):
     client = NoClientWarningRaiser()
     _catch_exceptions = True
     
-    def __init__(self):
+    def __init__(self, blueprint=None):
         super(Locust, self).__init__()
+        self.blueprint = blueprint
     
     def run(self):
         try:
@@ -123,8 +124,8 @@ class HttpLocust(Locust):
     The client support cookies, and therefore keeps the session between HTTP requests.
     """
     
-    def __init__(self):
-        super(HttpLocust, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(HttpLocust, self).__init__(*args, **kwargs)
         if self.host is None:
             raise LocustError("You must specify the base host. Either in the host attribute in the Locust class, or on the command line using the --host option.")
         

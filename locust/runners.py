@@ -4,6 +4,8 @@ import traceback
 import warnings
 import random
 import logging
+import os
+import json
 from time import time
 from hashlib import md5
 
@@ -11,6 +13,7 @@ import gevent
 from gevent import GreenletExit
 from gevent.pool import Group
 
+from blueprint import Blueprint
 import events
 from stats import global_stats
 
@@ -37,6 +40,9 @@ class LocustRunner(object):
         self.hatching_greenlet = None
         self.exceptions = {}
         self.stats = global_stats
+        self.blueprint = self._load_blueprint(
+            options.blueprint,
+        )
         
         # register listener that resets stats when hatching is complete
         def on_hatch_complete(user_count):
@@ -44,6 +50,18 @@ class LocustRunner(object):
             logger.info("Resetting stats\n")
             self.stats.reset_all()
         events.hatch_complete += on_hatch_complete
+
+    def _load_blueprint(self, filename):
+        blueprint = None
+        if filename and os.path.exists(filename):
+            with open(filename, 'r') as read_file:
+                try:
+                    blueprint = Blueprint(json.load(read_file))
+                except ValueError as e:
+                    warnings.warn(
+                        'Failed to load blueprint ("%s"): %s' % (filename, e)
+                    )
+        return blueprint
 
     @property
     def request_stats(self):
@@ -110,7 +128,7 @@ class LocustRunner(object):
                 occurence_count[locust.__name__] += 1
                 def start_locust(_):
                     try:
-                        locust().run()
+                        locust(blueprint=self.blueprint).run()
                     except GreenletExit:
                         pass
                 new_locust = self.locusts.spawn(start_locust, locust)

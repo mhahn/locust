@@ -228,6 +228,15 @@ def parse_options():
         help="show program's version number and exit"
     )
 
+    parser.add_option(
+        '-b', '--blueprint',
+        action='store',
+        type='string',
+        dest='blueprint',
+        default=False,
+        help='blueprint we want to load with the test',
+    )
+
     # Finalize
     # Return three-tuple of parser + the output from parse_args (opt obj, args)
     opts, args = parser.parse_args()
