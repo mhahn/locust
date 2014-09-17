@@ -30,3 +30,10 @@ class TestBlueprint(LocustTestCase):
         blueprint = Blueprint({})
         blueprint.update({'event': {'primary_key': 1234}})
         self.assertEqual(blueprint.event.primary_key, 1234)
+
+    def test_blue_print_clone(self):
+        data = {'test': 1}
+        blueprint1 = Blueprint(data)
+        blueprint2 = blueprint1.clone()
+        blueprint2.update({'test': 2})
+        self.assertNotEqual(blueprint1.test, blueprint2.test)

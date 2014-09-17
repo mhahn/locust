@@ -1,3 +1,4 @@
+from copy import deepcopy
 
 
 class Blueprint(object):
@@ -23,3 +24,6 @@ class Blueprint(object):
     def update(self, value):
         data = super(Blueprint, self).__getattribute__('_data')
         data.update(value)
+
+    def clone(self):
+        return Blueprint(deepcopy(self._data))

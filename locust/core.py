@@ -236,6 +236,7 @@ class TaskSet(object):
             raise LocustError("TaskSet should be called with Locust instance or TaskSet instance as first argument")
 
         self.parent = parent
+        self.blueprint = self.locust.blueprint.clone()
         
         # if this class doesn't have a min_wait or max_wait defined, copy it from Locust
         if not self.min_wait:
